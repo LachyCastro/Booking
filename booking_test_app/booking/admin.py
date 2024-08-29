@@ -15,3 +15,6 @@ class TourAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
     search_fields = ['id', 'name']
 
+admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Booking, BookingAdmin)
+admin.site.register(Tour, TourAdmin)
