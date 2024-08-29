@@ -9,9 +9,7 @@ class Booking(models.Model):
     tour = models.ForeignKey(Tour, on_delete=models.SET_NULL, null=True, blank=True)
 
     class State(models.IntegerChoices):
-        Pending = 0, 'Pending'
-        Approved = 1, 'Approved'
-        Denied = 2, 'Denied'
-        Completed = 3, 'Completed'
+        Pending = 0, 'Active'
+        Approved = 1, 'Cancelled'
 
     state = models.IntegerField(choices=State.choices,verbose_name=('state'), default= 0)
