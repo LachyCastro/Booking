@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from booking.swagger import schema_view
 from booking.views.list_booking import  *
+from booking.views.cancel_booking import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-     path('api/bookings/', BookingList.as_view(), name='booking-list-api'),
+    path('api/bookings/', BookingList.as_view(), name='booking-list-api'),
+    path('api/bookings/<int:pk>/cancel/', CancelBookingAPIView.as_view(), name='booking-cancel-api'),
 
 ]
