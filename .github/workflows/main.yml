@@ -16,20 +16,25 @@ jobs:
         run: |
           TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
           if [ "$TARGET_BRANCH" == "main" ]; then
-            LABEL="hotfix"
-          elif [ "$TARGET_BRANCH" == "staging" ]; then
-            LABEL="fix"
-          elif [ "$TARGET_BRANCH" == "develop" ]; then
-            LABEL="feature"
+            LABEL="stable"
+          elif [ "$TARGET_BRANCH" == "dev" ]; then
+            LABEL="development"
+          else
+            LABEL="other"
           fi
           echo "Label: $LABEL"
         id: label
 
-      - name: Add label to pull request
-        uses: octokit/request-action@v2
+      - name: Add label to pull request using GitHub API
+        uses: actions/github-script@v6
         with:
-          route: POST /repos/{owner}/{repo}/issues/{issue_number}/labels
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.repository }}
-          issue_number: ${{ github.event.pull_request.number }}
-          labels: ${{ steps.label.outputs.Label }}
+          script: |
+            const prNumber = ${{ github.event.pull_request.number }};
+            const label = '${{ steps.label.outputs.Label }}';
+            const response = await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              labels: [label],
+            });
+            console.log('Label added:', response.data);
