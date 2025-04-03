@@ -1,0 +1,35 @@
+name: Auto-label PRs based on target branch
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+jobs:
+  add-label:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Add label based on target branch
+        run: |
+          TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
+          if [ "$TARGET_BRANCH" == "main" ]; then
+            LABEL="hotfix"
+          elif [ "$TARGET_BRANCH" == "staging" ]; then
+            LABEL="fix"
+          elif [ "$TARGET_BRANCH" == "develop" ]; then
+            LABEL="feature"
+          fi
+          echo "Label: $LABEL"
+        id: label
+
+      - name: Add label to pull request
+        uses: octokit/request-action@v2
+        with:
+          route: POST /repos/{owner}/{repo}/issues/{issue_number}/labels
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.repository }}
+          issue_number: ${{ github.event.pull_request.number }}
+          labels: ${{ steps.label.outputs.Label }}
