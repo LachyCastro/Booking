@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, edited, reopened]
 
+permissions:
+  issues: write  # Esto permite modificar las etiquetas de los issues (PRs en este caso)
+
 jobs:
   add-label:
     runs-on: ubuntu-latest
